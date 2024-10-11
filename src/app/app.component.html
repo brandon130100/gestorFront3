@@ -1,0 +1,123 @@
+<div class="formularioRegistro">
+  <h2>Crear Tarea</h2>
+  <form [formGroup]="tareaForm" (ngSubmit)="guardar()">
+    <!-- Titulo -->
+    <div class="form-group">
+      <label for="titulo">Titulo</label>
+      <input
+        type="text"
+        id="titulo"
+        formControlName="titulo"
+        class="form-control"
+      />
+    </div>
+    <!-- Descripcion -->
+    <div class="form-group">
+      <label for="descripcion">Descripcion</label>
+      <input
+        type="text"
+        id="descripcion"
+        formControlName="descripcion"
+        class="form-control"
+      />
+    </div>
+    <!-- Fecha Limite -->
+    <div class="form-group">
+      <label for="fechaLimite">Fecha Limite</label>
+      <input
+        type="date"
+        id="fechaLimite"
+        formControlName="fechaLimite"
+        class="form-control"
+      />
+    </div>
+    <!-- Prioridad -->
+    <div class="form-group">
+      <label for="prioridad">Prioridad</label>
+      <select
+        name="prioridad"
+        id="prioridad"
+        formControlName="prioridad"
+        class="form-control"
+      >
+        <option [ngValue]="item" *ngFor="let item of prioridades">
+          {{ item.nombre }}
+        </option>
+      </select>
+    </div>
+    <!-- Estado -->
+    <div class="form-group">
+      <label for="estado">Estado</label>
+      <select
+        name="estado"
+        id="estado"
+        formControlName="estado"
+        class="form-control"
+      >
+        <option [ngValue]="item" *ngFor="let item of estados">
+          {{ item.nombre }}
+        </option>
+      </select>
+    </div>
+    <!-- Etiqueta -->
+    <div class="form-group">
+      <label for="etiqueta">Etiqueta</label>
+      <select
+        name="etiqueta"
+        id="etiqueta"
+        formControlName="etiqueta"
+        class="form-control"
+      >
+        <option [ngValue]="item" *ngFor="let item of etiquetas">
+          {{ item.nombre }}
+        </option>
+      </select>
+    </div>
+    <!-- Boton -->
+    <button
+      type="submit"
+      class="btn btn-primary mt-2"
+      [disabled]="tareaForm.invalid"
+    >
+      Guardar
+    </button>
+  </form>
+</div>
+
+<div class="formularioRegistro">
+  <h2>Tareas Registradas</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Titulo</th>
+        <th>Descripcion</th>
+        <th>Fecha De Creacion</th>
+        <th>Fecha Limite</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+        <th>Etiqueta</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of tareas">
+        <td>{{ item.id }}</td>
+        <td>{{ item.titulo }}</td>
+        <td>{{ item.descripcion }}</td>
+        <td>{{ item.fechaCreacion }}</td>
+        <td>{{ item.fechaLimite }}</td>
+        <td>{{ item.prioridad.nombre }}</td>
+        <td>{{ item.estado.nombre }}</td>
+        <td>{{ item.etiqueta.nombre }}</td>
+        <td>
+          <button type="button" class="btn btn-danger" (click)="eliminar(item)">
+            Eliminar
+          </button>
+          <button type="button" class="btn btn-success" (click)="editar(item)">
+            Editar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
