@@ -1,0 +1,118 @@
+<div class="formularioRegistro">
+  <h2>Crear Responsable</h2>
+  <form [formGroup]="responsableForm" (ngSubmit)="guardar()">
+    <!-- Nombre -->
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input
+        type="text"
+        id="nombre"
+        formControlName="nombre"
+        class="form-control"
+      />
+    </div>
+    <!-- Apellido -->
+    <div class="form-group">
+      <label for="apellido">Apellido</label>
+      <input
+        type="text"
+        id="apellido"
+        formControlName="apellido"
+        class="form-control"
+      />
+    </div>
+    <!-- Correo -->
+    <div class="form-group">
+      <label for="correo">Correo</label>
+      <input
+        type="email"
+        id="correo"
+        formControlName="correo"
+        class="form-control"
+      />
+    </div>
+    <!-- Celular -->
+    <div class="form-group">
+      <label for="celular">Celular</label>
+      <input
+        type="text"
+        id="celular"
+        formControlName="celular"
+        class="form-control"
+      />
+    </div>
+    <!-- Departamento -->
+    <div class="form-group">
+      <label for="departamento">Departamento</label>
+      <select
+        name="departamento"
+        id="departamento"
+        formControlName="departamento"
+        class="form-control"
+      >
+        <option [ngValue]="item" *ngFor="let item of departamentos">
+          {{ item.nombre }}
+        </option>
+      </select>
+    </div>
+    <!-- Puesto -->
+    <div class="form-group">
+      <label for="puesto">Puesto</label>
+      <select
+        name="puesto"
+        id="puesto"
+        formControlName="puesto"
+        class="form-control"
+      >
+        <option [ngValue]="item" *ngFor="let item of puestos">
+          {{ item.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Boton -->
+    <button
+      type="submit"
+      class="btn btn-primary mt-2"
+      [disabled]="responsableForm.invalid"
+    >
+      Guardar
+    </button>
+  </form>
+</div>
+
+<div class="formularioRegistro">
+  <h2>Responsables Guardados</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Celular</th>
+        <th>Departamento</th>
+        <th>Puesto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of responsables">
+        <td>{{ item.id }}</td>
+        <td>{{ item.nombre }}</td>
+        <td>{{ item.apellido }}</td>
+        <td>{{ item.correo }}</td>
+        <td>{{ item.celular }}</td>
+        <td>{{ item.departamento.nombre }}</td>
+        <td>{{ item.puesto.nombre }}</td>
+        <td>
+          <button type="button" class="btn btn-danger" (click)="eliminar(item)">
+            Eliminar
+          </button>
+          <button type="button" class="btn btn-success" (click)="editar(item)">
+            Editar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

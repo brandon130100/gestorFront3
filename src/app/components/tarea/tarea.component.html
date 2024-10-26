@@ -1,0 +1,177 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="formularioRegistro">
+            <h2>Crear Tarea</h2>
+            <form [formGroup]="tareaForm" (ngSubmit)="guardar()">
+              <!-- Nombre -->
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  formControlName="nombre"
+                  class="form-control"
+                />
+              </div>
+              <!-- Prioridad -->
+              <div class="form-group">
+                <label for="prioridad">Prioridad</label>
+                <select
+                  name="prioridad"
+                  id="prioridad"
+                  formControlName="prioridad"
+                  class="form-control"
+                >
+                  <option [ngValue]="item" *ngFor="let item of prioridades">
+                    {{ item.nombre }}
+                  </option>
+                </select>
+              </div>
+              <!-- Responsable -->
+              <div class="form-group">
+                <label for="responsable">Responsable</label>
+                <select
+                  name="responsable"
+                  id="responsable"
+                  formControlName="responsable"
+                  class="form-control"
+                >
+                  <option [ngValue]="item" *ngFor="let item of responsables">
+                    {{ item.nombre }}
+                  </option>
+                </select>
+              </div>
+              <!-- Estado -->
+              <div class="form-group">
+                <label for="estado">Estado</label>
+                <select
+                  name="estado"
+                  id="estado"
+                  formControlName="estado"
+                  class="form-control"
+                >
+                  <option [ngValue]="item" *ngFor="let item of estados">
+                    {{ item.nombre }}
+                  </option>
+                </select>
+              </div>
+              <!-- Fecha Cierre -->
+              <div class="form-group">
+                <label for="fechaCierre">Fecha de Cierre</label>
+                <input
+                  type="date"
+                  id="fechaCierre"
+                  formControlName="fechaCierre"
+                  class="form-control"
+                />
+              </div>
+              <!-- Proyecto -->
+              <div class="form-group">
+                <label for="proyecto">Proyecto</label>
+                <select
+                  name="proyecto"
+                  id="proyecto"
+                  formControlName="proyecto"
+                  class="form-control"
+                >
+                  <option [ngValue]="item" *ngFor="let item of proyectos">
+                    {{ item.nombre }}
+                  </option>
+                </select>
+              </div>
+              <!-- Boton -->
+              <button
+                type="submit"
+                class="btn btn-primary mt-2"
+                [disabled]="tareaForm.invalid"
+              >
+                Guardar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-md-9">
+      <div class="card">
+        <div class="card-body">
+          <div class="formularioRegistro">
+            <h2>Tareas Registradas</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Prioridad</th>
+                  <th>Responsable</th>
+                  <th>Estado</th>
+                  <th>Fecha de registro</th>
+                  <th>Fecha de cierre</th>
+                  <th>Proyecto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tareas">
+                  <td>{{ item.nombre }}</td>
+                  <td>{{ item.prioridad.nombre }}</td>
+                  <td>{{ item.responsable.nombre }}</td>
+                  <td>{{ item.estado.nombre }}</td>
+                  <td>{{ item.fechaRegistro }}</td>
+                  <td>{{ item.fechaCierre }}</td>
+                  <td>{{ item.proyecto.nombre }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      (click)="eliminar(item)"
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      (click)="editar(item)"
+                    >
+                      Editar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!--Prueba 2-->
+    <!-- <div class="col-md-9">
+      <div class="card" *ngFor="let tarea of tareas">
+        <div class="card-body">
+          <h5 class="card-title">{{ tarea.nombre }}</h5>
+          <p class="card-text">{{ tarea.prioridad.nombre }}</p>
+        </div>
+      </div>
+    </div> -->
+    <!-- Prueba 2 -->
+    <div class="col-md-9">
+      <div class="card" *ngFor="let tarea of tareas">
+        <div class="card-body">
+          <h5 class="card-title">{{ tarea.nombre }}</h5>
+          <p class="card-text">Prioridad: {{ tarea.prioridad.nombre }}</p>
+          <p class="card-text">Estado: {{ tarea.estado.nombre }}</p>
+          <p class="card-text">Responsable: {{ tarea.responsable.nombre }}</p>
+          <div class="card-text">
+            Fecha de registro: {{ tarea.fechaRegistro | date }}
+          </div>
+          <div class="card-text">
+            Fecha de cierre: {{ tarea.fechaCierre | date }}
+          </div>
+          <button class="btn btn-primary">Editar</button>
+          <button class="btn btn-danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
