@@ -107,6 +107,7 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
+    this.mostrarToast('La tarea se ha creado exitosamente.');
   }
 
   eliminar(tarea: any): void {
@@ -120,6 +121,7 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
+    this.mostrarToast('La tarea se ha eliminado correctamente.');
   }
 
   editar(tarea: any) {
@@ -133,5 +135,21 @@ export class TareaComponent implements OnInit {
       fechaCierre: tarea.fechaCierre,
       proyecto: tarea.proyecto.id,
     });
+  }
+
+  mostrarToast(mensaje: string) {
+    const toastElement = document.getElementById('taskToast');
+    if (toastElement) {
+      const toastBody = toastElement.querySelector('.toast-body');
+      if (toastBody) {
+        toastBody.textContent = mensaje;
+      }
+      const toast = new (window as any).bootstrap.Toast(toastElement);
+      toast.show();
+    }
+  }
+
+  cerrar(): void {
+    this.tareaForm.reset();
   }
 }
