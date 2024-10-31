@@ -1,4 +1,5 @@
 <div class="container mt-4">
+  <!--Muestra boton para agregar tarea-->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>Gestión de Tareas</h3>
     <button
@@ -10,7 +11,9 @@
       Nueva Tarea
     </button>
   </div>
+  <!--Muestra boton para agregar tarea-->
 
+  <!--Muestra tareas-->
   <div class="row gy-4">
     <div class="col-md-4" *ngFor="let tarea of tareas">
       <div class="card h-100">
@@ -25,6 +28,7 @@
           <p class="card-text">
             Fecha de cierre: {{ tarea.fechaCierre | date }}
           </p>
+          <p class="card-text">Proyecto: {{ tarea.proyecto.nombre }}</p>
 
           <div class="mt-auto d-flex justify-content-between">
             <button
@@ -35,16 +39,61 @@
             >
               Editar
             </button>
-            <button class="btn btn-danger" (click)="eliminar(tarea)">
+            <button
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal2"
+            >
               Eliminar
             </button>
           </div>
         </div>
       </div>
+      <!--Modal para la confirmacion de eliminacion-->
+      <div
+        class="modal fade"
+        id="exampleModal2"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel2"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">
+                Eliminar tarea.
+              </h5>
+            </div>
+            <div class="modal-body">
+              Seguro que deseas eliminar la tarea: {{ tarea.nombre }}
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                (click)="eliminar(tarea)"
+                data-bs-dismiss="modal"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Modal para la confirmacion de eliminacion-->
     </div>
   </div>
+  <!--Muestra tareas-->
 </div>
 
+<!--Muestra modal para crear tarea-->
 <div
   class="modal fade"
   id="exampleModal"
@@ -165,7 +214,9 @@
     </div>
   </div>
 </div>
+<!--Muestra modal para crear tarea-->
 
+<!--Muestra notificacion segun si agregamos o eliminamos tareas-->
 <div
   class="toast-container position-fixed bottom-0 end-0 p-3"
   style="z-index: 11"
@@ -192,3 +243,4 @@
     <div class="toast-body"></div>
   </div>
 </div>
+<!--Muestra notificacion segun si agregamos o eliminamos tareas-->
