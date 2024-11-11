@@ -41,6 +41,7 @@
             </button>
             <button
               class="btn btn-danger"
+              (click)="seleccionarTarea(tarea)"
               data-bs-toggle="modal"
               data-bs-target="#exampleModal2"
             >
@@ -49,48 +50,46 @@
           </div>
         </div>
       </div>
-      <!--Modal para la confirmacion de eliminacion-->
-      <div
-        class="modal fade"
-        id="exampleModal2"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel2"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel2">
-                Eliminar tarea.
-              </h5>
-            </div>
-            <div class="modal-body">
-              Seguro que deseas eliminar la tarea: {{ tarea.nombre }}
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                (click)="eliminar(tarea)"
-                data-bs-dismiss="modal"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--Modal para la confirmacion de eliminacion-->
     </div>
   </div>
   <!--Muestra tareas-->
+
+  <!-- Modal para la confirmación de eliminación fuera del *ngFor -->
+  <div
+    class="modal fade"
+    id="exampleModal2"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel2"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Eliminar tarea</h5>
+        </div>
+        <div class="modal-body">
+          Seguro que deseas eliminar la tarea: {{ tareaSeleccionada?.nombre }}
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            (click)="eliminar(tareaSeleccionada)"
+            data-bs-dismiss="modal"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!--Muestra modal para crear tarea-->

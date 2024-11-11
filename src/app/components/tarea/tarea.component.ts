@@ -18,6 +18,8 @@ export class TareaComponent implements OnInit {
   estados: any;
   responsables: any;
   proyectos: any;
+  tareaSeleccionada: any;
+  selectedPriorityId: number | null = null;
 
   constructor(
     public fb: FormBuilder,
@@ -84,6 +86,8 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
+
+    this.getAllTareas();
   }
 
   guardar(): void {
@@ -151,5 +155,28 @@ export class TareaComponent implements OnInit {
 
   cerrar(): void {
     this.tareaForm.reset();
+  }
+
+  seleccionarTarea(tarea: any) {
+    this.tareaSeleccionada = tarea;
+  }
+
+  getAllTareas(): void {
+    this.tareasService.getAllTareas().subscribe((data) => (this.tareas = data));
+  }
+
+  filterTareasByPriority(): void {
+    if (this.selectedPriorityId !== null) {
+      this.tareasService
+        .getTareasByPriority(this.selectedPriorityId)
+        .subscribe((data) => {
+          // Filtramos para asegurarnos de que todas las tareas tengan una prioridad asignada
+          this.tareas = data.filter(
+            (tarea: any) => tarea.priority && tarea.priority.name
+          );
+        });
+    } else {
+      this.getAllTareas();
+    }
   }
 }

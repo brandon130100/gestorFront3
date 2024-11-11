@@ -21,4 +21,10 @@ export class TareasService {
   public deleteTarea(id: any): Observable<any> {
     return this.httpClient.delete(this.API_SERVER + '/delete/' + id);
   }
+
+  public getTareasByPriority(priorityId: number): Observable<any> {
+    return this.httpClient.get(
+      `${this.API_SERVER}/filter?priorityId=${priorityId}`
+    );
+  }
 }
