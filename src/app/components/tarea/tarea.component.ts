@@ -20,6 +20,10 @@ export class TareaComponent implements OnInit {
   proyectos: any;
   tareaSeleccionada: any;
   selectedPriorityId: number | null = null;
+  selectedResponsableId: number | null = null;
+  selectedEstadoId: number | null = null;
+  selectedProyectoId: number | null = null;
+  selectedFechaCierre: string | null = null;
 
   constructor(
     public fb: FormBuilder,
@@ -42,14 +46,8 @@ export class TareaComponent implements OnInit {
       proyecto: ['', Validators.required],
     });
 
-    this.tareasService.getAllTareas().subscribe(
-      (resp) => {
-        this.tareas = resp;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    // this.getAllTareas();
+    this.obtenerTareas();
 
     this.prioridadesService.getAllPrioridades().subscribe(
       (resp) => {
@@ -86,8 +84,6 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
-
-    this.getAllTareas();
   }
 
   guardar(): void {
@@ -165,18 +161,89 @@ export class TareaComponent implements OnInit {
     this.tareasService.getAllTareas().subscribe((data) => (this.tareas = data));
   }
 
-  filterTareasByPriority(): void {
-    if (this.selectedPriorityId !== null) {
-      this.tareasService
-        .getTareasByPriority(this.selectedPriorityId)
-        .subscribe((data) => {
-          // Filtramos para asegurarnos de que todas las tareas tengan una prioridad asignada
-          this.tareas = data.filter(
-            (tarea: any) => tarea.priority && tarea.priority.name
-          );
-        });
-    } else {
-      this.getAllTareas();
-    }
+  // filterTareasByPriority(): void {
+  //   if (this.selectedPriorityId !== null) {
+  //     this.tareasService.getTareasByPriority(this.selectedPriorityId).subscribe(
+  //       (data) => {
+  //         this.tareas = data;
+  //       },
+  //       (error) => {
+  //         console.error(error);
+  //       }
+  //     );
+  //   } else {
+  //     this.getAllTareas(); // Si no hay prioridad seleccionada, muestra todas las tareas
+  //   }
+  //   console.log(this.tareas);
+  // }
+
+  // filterTareasByResponsable(): void {
+  //   if (this.selectedResponsableId !== null) {
+  //     this.tareasService
+  //       .getTareasByResponsable(this.selectedResponsableId)
+  //       .subscribe(
+  //         (data) => {
+  //           this.tareas = data;
+  //         },
+  //         (error) => {
+  //           console.error(error);
+  //         }
+  //       );
+  //   } else {
+  //     this.getAllTareas(); // Si no hay responsable seleccionado, muestra todas las tareas
+  //   }
+  //   console.log(this.tareas);
+  // }
+
+  // filtrarTareasByPrioridadAndResponsable(): void {
+  //   // Caso: ambos seleccionados
+  //   if (
+  //     this.selectedResponsableId !== null &&
+  //     this.selectedPriorityId !== null
+  //   ) {
+  //     this.tareasService
+  //       .getTareasByPriorityAndResponsable(
+  //         this.selectedPriorityId,
+  //         this.selectedResponsableId
+  //       )
+  //       .subscribe((data) => (this.tareas = data));
+  //     return;
+  //   }
+  //   if (this.selectedResponsableId !== null) {
+  //     this.filterTareasByResponsable();
+  //     return;
+  //   }
+  //   if (this.selectedPriorityId !== null) {
+  //     this.filterTareasByPriority();
+  //     return;
+  //   }
+  //   this.getAllTareas();
+  // }
+
+  obtenerTareas(): void {
+    this.tareasService
+      .filtrarTareas(
+        this.selectedPriorityId,
+        this.selectedResponsableId,
+        this.selectedEstadoId,
+        this.selectedProyectoId,
+        this.selectedFechaCierre
+      )
+      .subscribe(
+        (tareas) => {
+          this.tareas = tareas;
+        },
+        (error) => {
+          console.error('Error al obtener tareas:', error);
+        }
+      );
+  }
+
+  onFiltrar(): void {
+    this.obtenerTareas(); // Vuelve a obtener las tareas con los filtros aplicados
+  }
+
+  borrarFiltros(): void {
+    this.getAllTareas();
   }
 }

@@ -1,3 +1,56 @@
+<!-- Select para elegir la prioridad -->
+<select [(ngModel)]="selectedResponsableId">
+  <option value="selectedResponsableId" disabled selected>
+    Selecciona un responsable
+  </option>
+  <option *ngFor="let item of responsables" [ngValue]="item.id">
+    {{ item.nombre }}
+  </option>
+</select>
+
+<!-- Select para elegir la prioridad -->
+<select [(ngModel)]="selectedPriorityId">
+  <option value="selectedPriorityId" disabled selected>
+    Selecciona una prioridad
+  </option>
+  <option *ngFor="let item of prioridades" [ngValue]="item.id">
+    {{ item.nombre }}
+  </option>
+</select>
+
+<!-- Select para elegir el estado -->
+<select [(ngModel)]="selectedEstadoId">
+  <option value="selectedEstadoId" disabled selected>
+    Selecciona un estado
+  </option>
+  <option *ngFor="let item of estados" [ngValue]="item.id">
+    {{ item.nombre }}
+  </option>
+</select>
+
+<!-- Select para elegir el proyecto -->
+<select [(ngModel)]="selectedProyectoId">
+  <option value="selectedProyectoId" disabled selected>
+    Selecciona un proyecto
+  </option>
+  <option *ngFor="let item of proyectos" [ngValue]="item.id">
+    {{ item.nombre }}
+  </option>
+</select>
+
+<!-- Select para elegir la fecha de cierre -->
+<label for="selectedFechaCierre">Fecha de Cierre:</label>
+<input type="date" [(ngModel)]="selectedFechaCierre" id="selectedFechaCierre" />
+
+<!-- Botón para filtrar -->
+<!-- <button (click)="filterTareasByPriority()">Filtrar por Prioridad</button> -->
+
+<!-- <button (click)="filterTareasByResponsable()">Filtrar por Responsable</button> -->
+<button (click)="onFiltrar()">Filtrar</button>
+
+<!--Boton para borrar filtros-->
+<button (click)="getAllTareas()">Borrar filtros</button>
+
 <div class="container mt-4">
   <!--Muestra boton para agregar tarea-->
   <div class="d-flex justify-content-between align-items-center mb-4">
