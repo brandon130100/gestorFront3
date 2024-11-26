@@ -5,6 +5,8 @@ import { PrioridadesService } from 'src/app/services/prioridades/prioridades.ser
 import { ProyectosService } from 'src/app/services/proyectos/proyectos.service';
 import { ResponsablesService } from 'src/app/services/responsables/responsables.service';
 import { TareasService } from 'src/app/services/tareas/tareas.service';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-tarea',
@@ -13,17 +15,14 @@ import { TareasService } from 'src/app/services/tareas/tareas.service';
 })
 export class TareaComponent implements OnInit {
   tareaForm: FormGroup = this.fb.group({});
+  filtroForm: FormGroup = this.fb.group({});
   tareas: any;
   prioridades: any;
   estados: any;
   responsables: any;
   proyectos: any;
   tareaSeleccionada: any;
-  selectedPriorityId: number | null = null;
-  selectedResponsableId: number | null = null;
-  selectedEstadoId: number | null = null;
-  selectedProyectoId: number | null = null;
-  selectedFechaCierre: string | null = null;
+  criterioOrdenamiento: string = 'fechaCierre';
 
   constructor(
     public fb: FormBuilder,
@@ -44,6 +43,15 @@ export class TareaComponent implements OnInit {
       fechaRegistro: [null],
       fechaCierre: ['', Validators.required],
       proyecto: ['', Validators.required],
+    });
+
+    this.filtroForm = this.fb.group({
+      prioridad: [null],
+      responsable: [null],
+      estado: [null],
+      fechaRegistro: [null],
+      fechaCierre: [null],
+      proyecto: [null],
     });
 
     // this.getAllTareas();
@@ -84,6 +92,8 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
+
+    console.log(this.tareas);
   }
 
   guardar(): void {
@@ -161,73 +171,17 @@ export class TareaComponent implements OnInit {
     this.tareasService.getAllTareas().subscribe((data) => (this.tareas = data));
   }
 
-  // filterTareasByPriority(): void {
-  //   if (this.selectedPriorityId !== null) {
-  //     this.tareasService.getTareasByPriority(this.selectedPriorityId).subscribe(
-  //       (data) => {
-  //         this.tareas = data;
-  //       },
-  //       (error) => {
-  //         console.error(error);
-  //       }
-  //     );
-  //   } else {
-  //     this.getAllTareas(); // Si no hay prioridad seleccionada, muestra todas las tareas
-  //   }
-  //   console.log(this.tareas);
-  // }
-
-  // filterTareasByResponsable(): void {
-  //   if (this.selectedResponsableId !== null) {
-  //     this.tareasService
-  //       .getTareasByResponsable(this.selectedResponsableId)
-  //       .subscribe(
-  //         (data) => {
-  //           this.tareas = data;
-  //         },
-  //         (error) => {
-  //           console.error(error);
-  //         }
-  //       );
-  //   } else {
-  //     this.getAllTareas(); // Si no hay responsable seleccionado, muestra todas las tareas
-  //   }
-  //   console.log(this.tareas);
-  // }
-
-  // filtrarTareasByPrioridadAndResponsable(): void {
-  //   // Caso: ambos seleccionados
-  //   if (
-  //     this.selectedResponsableId !== null &&
-  //     this.selectedPriorityId !== null
-  //   ) {
-  //     this.tareasService
-  //       .getTareasByPriorityAndResponsable(
-  //         this.selectedPriorityId,
-  //         this.selectedResponsableId
-  //       )
-  //       .subscribe((data) => (this.tareas = data));
-  //     return;
-  //   }
-  //   if (this.selectedResponsableId !== null) {
-  //     this.filterTareasByResponsable();
-  //     return;
-  //   }
-  //   if (this.selectedPriorityId !== null) {
-  //     this.filterTareasByPriority();
-  //     return;
-  //   }
-  //   this.getAllTareas();
-  // }
-
   obtenerTareas(): void {
+    const valoresFormulario = this.filtroForm.value;
     this.tareasService
       .filtrarTareas(
-        this.selectedPriorityId,
-        this.selectedResponsableId,
-        this.selectedEstadoId,
-        this.selectedProyectoId,
-        this.selectedFechaCierre
+        valoresFormulario.prioridad,
+        valoresFormulario.responsable,
+        valoresFormulario.estado,
+        valoresFormulario.proyecto,
+        valoresFormulario.fechaCierre,
+        valoresFormulario.fechaRegistro,
+        this.criterioOrdenamiento
       )
       .subscribe(
         (tareas) => {
@@ -244,6 +198,127 @@ export class TareaComponent implements OnInit {
   }
 
   borrarFiltros(): void {
+    this.filtroForm.reset();
     this.getAllTareas();
+  }
+  clearFilter(campo: string): void {
+    const control = this.filtroForm.get(campo);
+    if (control) {
+      control.reset(); // Resetea solo el control especificado
+    }
+  }
+
+  generarPDF() {
+    const doc = new jsPDF();
+
+    // titulo del pdf
+    doc.setFontSize(20);
+    const responsable = this.filtroForm.get('responsable')?.value;
+    const prioridad = this.filtroForm.get('prioridad')?.value;
+    const estado = this.filtroForm.get('estado')?.value;
+    const proyecto = this.filtroForm.get('proyecto')?.value;
+
+    doc.text(`Lista de Tareas`, 10, 10);
+
+    doc.setFontSize(14);
+
+    if (responsable !== null) {
+      const tarea = this.tareas[0];
+      const responsable = tarea.responsable.nombre;
+      doc.text(`Responsable: ${responsable}`, 10, 15);
+    } else {
+      doc.text(`Responsable: Todos`, 10, 15);
+    }
+
+    if (prioridad !== null) {
+      const tarea = this.tareas[0];
+      const prioridad = tarea.prioridad.nombre;
+      doc.text(`Prioridad: ${prioridad}`, 10, 20);
+    } else {
+      doc.text(`Pioridad: Todos`, 10, 20);
+    }
+
+    if (estado !== null) {
+      const tarea = this.tareas[0];
+      const estado = tarea.estado.nombre;
+      doc.text(`Estado: ${estado}`, 10, 25);
+    } else {
+      doc.text(`Estado: Todos`, 10, 25);
+    }
+
+    if (proyecto !== null) {
+      const tarea = this.tareas[0];
+      const proyecto = tarea.proyecto.nombre;
+      doc.text(`Proyecto: ${proyecto}`, 10, 30);
+    } else {
+      doc.text(`Proyecto: Todos`, 10, 30);
+    }
+
+    const tareas = this.tareas;
+
+    const data = tareas.map(
+      (tareas: {
+        proyecto: any;
+        fechaCierre: any;
+        fechaRegistro: any;
+        prioridad: any;
+        responsable: any;
+        nombre: any;
+        estado: { nombre: any };
+      }) => ({
+        nombre: tareas.nombre,
+        estado: tareas.estado.nombre,
+        responsable: tareas.responsable.nombre,
+        prioridad: tareas.prioridad.nombre,
+        fechaRegistro: tareas.fechaRegistro,
+        fechaCierre: tareas.fechaCierre,
+        proyecto: tareas.proyecto.nombre,
+      })
+    );
+
+    // creacion de Head dinamico:
+
+    // Headers para la tabla de tareas
+    autoTable(doc, {
+      head: [
+        [
+          'Tarea',
+          'Estado',
+          'Responsable',
+          'Prioridad',
+          'Fecha de Registro',
+          'Fecha de Cierre',
+          'Proyecto',
+        ],
+      ],
+      body: data.map(
+        (task: {
+          proyecto: any;
+          fechaCierre: any;
+          fechaRegistro: any;
+          prioridad: any;
+          responsable: any;
+          nombre: any;
+          estado: any;
+        }) => [
+          task.nombre,
+          task.estado,
+          task.responsable,
+          task.prioridad,
+          task.fechaRegistro,
+          task.fechaCierre,
+          task.proyecto,
+        ]
+      ),
+      startY: 35,
+      theme: 'grid',
+      styles: { cellPadding: 1, fontSize: 10 },
+      // columnStyles: {
+      //   0: { halign: 'left' },
+      //   1: { halign: 'center' },
+      // },
+    });
+
+    doc.save('lista_de_tareas.pdf');
   }
 }

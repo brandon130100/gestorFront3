@@ -1,63 +1,12 @@
-<!-- Select para elegir la prioridad -->
-<select [(ngModel)]="selectedResponsableId">
-  <option value="selectedResponsableId" disabled selected>
-    Selecciona un responsable
-  </option>
-  <option *ngFor="let item of responsables" [ngValue]="item.id">
-    {{ item.nombre }}
-  </option>
-</select>
-
-<!-- Select para elegir la prioridad -->
-<select [(ngModel)]="selectedPriorityId">
-  <option value="selectedPriorityId" disabled selected>
-    Selecciona una prioridad
-  </option>
-  <option *ngFor="let item of prioridades" [ngValue]="item.id">
-    {{ item.nombre }}
-  </option>
-</select>
-
-<!-- Select para elegir el estado -->
-<select [(ngModel)]="selectedEstadoId">
-  <option value="selectedEstadoId" disabled selected>
-    Selecciona un estado
-  </option>
-  <option *ngFor="let item of estados" [ngValue]="item.id">
-    {{ item.nombre }}
-  </option>
-</select>
-
-<!-- Select para elegir el proyecto -->
-<select [(ngModel)]="selectedProyectoId">
-  <option value="selectedProyectoId" disabled selected>
-    Selecciona un proyecto
-  </option>
-  <option *ngFor="let item of proyectos" [ngValue]="item.id">
-    {{ item.nombre }}
-  </option>
-</select>
-
-<!-- Select para elegir la fecha de cierre -->
-<label for="selectedFechaCierre">Fecha de Cierre:</label>
-<input type="date" [(ngModel)]="selectedFechaCierre" id="selectedFechaCierre" />
-
-<!-- Botón para filtrar -->
-<!-- <button (click)="filterTareasByPriority()">Filtrar por Prioridad</button> -->
-
-<!-- <button (click)="filterTareasByResponsable()">Filtrar por Responsable</button> -->
-<button (click)="onFiltrar()">Filtrar</button>
-
-<!--Boton para borrar filtros-->
-<button (click)="getAllTareas()">Borrar filtros</button>
-
 <div class="container mt-4">
   <!--Muestra boton para agregar tarea-->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Gestión de Tareas</h3>
+    <h3 class="p-2">Gestión de Tareas</h3>
+
+    <!-- Boton para crear tareas-->
     <button
       type="button"
-      class="btn btn-primary"
+      class="btn btn-primary ms-auto p-2"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
     >
@@ -65,6 +14,197 @@
     </button>
   </div>
   <!--Muestra boton para agregar tarea-->
+
+  <!-- Muestra filtros y ordenamiento -->
+  <div>
+    <label for="ordenamiento">Ordenar por:</label>
+    <select
+      id="ordenamiento"
+      [(ngModel)]="criterioOrdenamiento"
+      (click)="onFiltrar()"
+    >
+      <option value="fechaCierre" selected>
+        Fecha de Cierre (más cercana)
+      </option>
+      <option value="prioridad">Prioridad</option>
+      <option value="responsable">Responsable</option>
+      <option value="estado">Estado</option>
+      <option value="proyecto">Proyecto</option>
+    </select>
+  </div>
+
+  <form [formGroup]="filtroForm">
+    <div class="dropdown p-2">
+      <a
+        class="btn btn-secondary dropdown-toggle"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <i class="bi bi-funnel-fill"></i>
+      </a>
+
+      <ul class="dropdown-menu">
+        <div class="filtro-container">
+          <li class="filtro-item position-relative">
+            <label for="responsable" class="form-label">
+              <i class="bi bi-person-circle"></i> Responsable:
+            </label>
+            <select
+              class="form-select"
+              formControlName="responsable"
+              id="responsable"
+              (click)="onFiltrar()"
+            >
+              <option value="" selected>Selecciona un responsable</option>
+              <option *ngFor="let item of responsables" [value]="item.id">
+                {{ item.nombre }}
+              </option>
+            </select>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('responsable');
+                $event.stopPropagation();
+                onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="filtro-item position-relative">
+            <label for="prioridad" class="form-label">
+              <i class="bi bi-flag-fill"></i> Prioridad:
+            </label>
+            <select
+              class="form-select"
+              formControlName="prioridad"
+              id="prioridad"
+              (click)="onFiltrar()"
+            >
+              <option value="" disabled selected>
+                Selecciona una prioridad
+              </option>
+              <option *ngFor="let item of prioridades" [value]="item.id">
+                {{ item.nombre }}
+              </option>
+            </select>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('prioridad'); $event.stopPropagation(); onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="filtro-item position-relative">
+            <label for="estado" class="form-label">
+              <i class="bi bi-check-circle-fill"></i> Estado:
+            </label>
+            <select
+              class="form-select"
+              formControlName="estado"
+              id="estado"
+              (click)="onFiltrar()"
+            >
+              <option value="" disabled selected>Selecciona un estado</option>
+              <option *ngFor="let item of estados" [value]="item.id">
+                {{ item.nombre }}
+              </option>
+            </select>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('estado'); $event.stopPropagation(); onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="filtro-item position-relative">
+            <label for="proyecto" class="form-label">
+              <i class="bi bi-folder-fill"></i> Proyecto:
+            </label>
+            <select
+              class="form-select"
+              formControlName="proyecto"
+              id="proyecto"
+              (click)="onFiltrar()"
+            >
+              <option value="" disabled selected>Selecciona un proyecto</option>
+              <option *ngFor="let item of proyectos" [value]="item.id">
+                {{ item.nombre }}
+              </option>
+            </select>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('proyecto'); $event.stopPropagation(); onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="filtro-item position-relative">
+            <label for="fechaCierre" class="form-label">
+              <i class="bi bi-calendar-check"></i> Fecha de Cierre:
+            </label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fechaCierre"
+              id="fechaCierre"
+              (click)="onFiltrar()"
+            />
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('fechaCierre');
+                $event.stopPropagation();
+                onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="filtro-item position-relative">
+            <label for="fechaRegistro" class="form-label">
+              <i class="bi bi-calendar-plus"></i> Fecha de Registro:
+            </label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fechaRegistro"
+              id="fechaRegistro"
+              (click)="onFiltrar()"
+            />
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="
+                clearFilter('fechaRegistro');
+                $event.stopPropagation();
+                onFiltrar()
+              "
+            ></button>
+          </li>
+
+          <li class="d-flex mt-3">
+            <button class="btn btn-outline-danger" (click)="borrarFiltros()">
+              Borrar filtros
+            </button>
+          </li>
+        </div>
+      </ul>
+    </div>
+  </form>
 
   <!--Muestra tareas-->
   <div class="row gy-4">
@@ -296,3 +436,7 @@
   </div>
 </div>
 <!--Muestra notificacion segun si agregamos o eliminamos tareas-->
+
+<!-- Boton para pdf -->
+
+<button class="btn btn-primary" (click)="generarPDF()">Generar PDF</button>
