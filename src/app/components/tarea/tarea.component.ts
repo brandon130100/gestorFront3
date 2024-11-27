@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { EstadosService } from 'src/app/services/estados/estados.service';
 import { PrioridadesService } from 'src/app/services/prioridades/prioridades.service';
 import { ProyectosService } from 'src/app/services/proyectos/proyectos.service';
@@ -23,6 +28,11 @@ export class TareaComponent implements OnInit {
   proyectos: any;
   tareaSeleccionada: any;
   criterioOrdenamiento: string = 'fechaCierre';
+  page: number = 1;
+
+  get nombre() {
+    return this.tareaForm.get('nombre') as FormControl;
+  }
 
   constructor(
     public fb: FormBuilder,
@@ -36,7 +46,10 @@ export class TareaComponent implements OnInit {
   ngOnInit(): void {
     this.tareaForm = this.fb.group({
       id: [''],
-      nombre: ['', Validators.required],
+      nombre: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-Z0-9 ]{5,}')],
+      ],
       prioridad: ['', Validators.required],
       responsable: ['', Validators.required],
       estado: ['', Validators.required],
@@ -54,7 +67,6 @@ export class TareaComponent implements OnInit {
       proyecto: [null],
     });
 
-    // this.getAllTareas();
     this.obtenerTareas();
 
     this.prioridadesService.getAllPrioridades().subscribe(
@@ -92,8 +104,6 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
-
-    console.log(this.tareas);
   }
 
   guardar(): void {
@@ -117,7 +127,7 @@ export class TareaComponent implements OnInit {
         console.error(error);
       }
     );
-    this.mostrarToast('La tarea se ha creado exitosamente.');
+    this.mostrarToast('La tarea se ha creado o modificado exitosamente.');
   }
 
   eliminar(tarea: any): void {
@@ -167,10 +177,6 @@ export class TareaComponent implements OnInit {
     this.tareaSeleccionada = tarea;
   }
 
-  getAllTareas(): void {
-    this.tareasService.getAllTareas().subscribe((data) => (this.tareas = data));
-  }
-
   obtenerTareas(): void {
     const valoresFormulario = this.filtroForm.value;
     this.tareasService
@@ -194,33 +200,39 @@ export class TareaComponent implements OnInit {
   }
 
   onFiltrar(): void {
-    this.obtenerTareas(); // Vuelve a obtener las tareas con los filtros aplicados
+    this.obtenerTareas();
   }
 
   borrarFiltros(): void {
     this.filtroForm.reset();
-    this.getAllTareas();
+    this.obtenerTareas();
   }
+
   clearFilter(campo: string): void {
     const control = this.filtroForm.get(campo);
     if (control) {
-      control.reset(); // Resetea solo el control especificado
+      control.reset();
     }
   }
 
   generarPDF() {
     const doc = new jsPDF();
 
-    // titulo del pdf
     doc.setFontSize(20);
     const responsable = this.filtroForm.get('responsable')?.value;
     const prioridad = this.filtroForm.get('prioridad')?.value;
     const estado = this.filtroForm.get('estado')?.value;
     const proyecto = this.filtroForm.get('proyecto')?.value;
+    doc.setFontSize(20);
 
-    doc.text(`Lista de Tareas`, 10, 10);
+    doc.setTextColor(0, 0, 255);
+    doc.text('Lista de Tareas', doc.internal.pageSize.width / 2, 10, {
+      align: 'center',
+    });
 
     doc.setFontSize(14);
+
+    doc.setTextColor(0, 0, 0);
 
     if (responsable !== null) {
       const tarea = this.tareas[0];
@@ -276,9 +288,6 @@ export class TareaComponent implements OnInit {
       })
     );
 
-    // creacion de Head dinamico:
-
-    // Headers para la tabla de tareas
     autoTable(doc, {
       head: [
         [
@@ -292,7 +301,7 @@ export class TareaComponent implements OnInit {
         ],
       ],
       body: data.map(
-        (task: {
+        (tarea: {
           proyecto: any;
           fechaCierre: any;
           fechaRegistro: any;
@@ -301,22 +310,18 @@ export class TareaComponent implements OnInit {
           nombre: any;
           estado: any;
         }) => [
-          task.nombre,
-          task.estado,
-          task.responsable,
-          task.prioridad,
-          task.fechaRegistro,
-          task.fechaCierre,
-          task.proyecto,
+          tarea.nombre,
+          tarea.estado,
+          tarea.responsable,
+          tarea.prioridad,
+          tarea.fechaRegistro,
+          tarea.fechaCierre,
+          tarea.proyecto,
         ]
       ),
       startY: 35,
       theme: 'grid',
       styles: { cellPadding: 1, fontSize: 10 },
-      // columnStyles: {
-      //   0: { halign: 'left' },
-      //   1: { halign: 'center' },
-      // },
     });
 
     doc.save('lista_de_tareas.pdf');

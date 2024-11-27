@@ -1,12 +1,11 @@
-<div class="container mt-4">
-  <!--Muestra boton para agregar tarea-->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="p-2">Gestión de Tareas</h3>
+<div class="container mt-1">
+  <div class="d-flex justify-content-between align-items-center mb-2 p-2">
+    <h1>Tareas</h1>
 
     <!-- Boton para crear tareas-->
     <button
       type="button"
-      class="btn btn-primary ms-auto p-2"
+      class="btn btn-primary ms-auto p-2 rounded-pill shadow-sm"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
     >
@@ -15,200 +14,52 @@
   </div>
   <!--Muestra boton para agregar tarea-->
 
-  <!-- Muestra filtros y ordenamiento -->
-  <div>
-    <label for="ordenamiento">Ordenar por:</label>
-    <select
-      id="ordenamiento"
-      [(ngModel)]="criterioOrdenamiento"
-      (click)="onFiltrar()"
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <!-- Offcanvas para filtrar -->
+    <button
+      class="btn btn-outline-none bg-transparent d-flex align-items-center"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasFilters"
+      aria-controls="offcanvasFilters"
     >
-      <option value="fechaCierre" selected>
-        Fecha de Cierre (más cercana)
-      </option>
-      <option value="prioridad">Prioridad</option>
-      <option value="responsable">Responsable</option>
-      <option value="estado">Estado</option>
-      <option value="proyecto">Proyecto</option>
-    </select>
-  </div>
+      <i class="bi bi-funnel me-2"></i>Filtrar
+    </button>
 
-  <form [formGroup]="filtroForm">
-    <div class="dropdown p-2">
-      <a
-        class="btn btn-secondary dropdown-toggle"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
+    <!-- Ordenamiento -->
+    <div class="d-flex align-items-center">
+      <i class="bi bi-arrow-down-up me-2"></i>
+      <select
+        id="ordenamiento"
+        class="form-select form-select-sm bg-transparent border-secondary"
+        [(ngModel)]="criterioOrdenamiento"
+        (click)="onFiltrar()"
       >
-        <i class="bi bi-funnel-fill"></i>
-      </a>
-
-      <ul class="dropdown-menu">
-        <div class="filtro-container">
-          <li class="filtro-item position-relative">
-            <label for="responsable" class="form-label">
-              <i class="bi bi-person-circle"></i> Responsable:
-            </label>
-            <select
-              class="form-select"
-              formControlName="responsable"
-              id="responsable"
-              (click)="onFiltrar()"
-            >
-              <option value="" selected>Selecciona un responsable</option>
-              <option *ngFor="let item of responsables" [value]="item.id">
-                {{ item.nombre }}
-              </option>
-            </select>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('responsable');
-                $event.stopPropagation();
-                onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="filtro-item position-relative">
-            <label for="prioridad" class="form-label">
-              <i class="bi bi-flag-fill"></i> Prioridad:
-            </label>
-            <select
-              class="form-select"
-              formControlName="prioridad"
-              id="prioridad"
-              (click)="onFiltrar()"
-            >
-              <option value="" disabled selected>
-                Selecciona una prioridad
-              </option>
-              <option *ngFor="let item of prioridades" [value]="item.id">
-                {{ item.nombre }}
-              </option>
-            </select>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('prioridad'); $event.stopPropagation(); onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="filtro-item position-relative">
-            <label for="estado" class="form-label">
-              <i class="bi bi-check-circle-fill"></i> Estado:
-            </label>
-            <select
-              class="form-select"
-              formControlName="estado"
-              id="estado"
-              (click)="onFiltrar()"
-            >
-              <option value="" disabled selected>Selecciona un estado</option>
-              <option *ngFor="let item of estados" [value]="item.id">
-                {{ item.nombre }}
-              </option>
-            </select>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('estado'); $event.stopPropagation(); onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="filtro-item position-relative">
-            <label for="proyecto" class="form-label">
-              <i class="bi bi-folder-fill"></i> Proyecto:
-            </label>
-            <select
-              class="form-select"
-              formControlName="proyecto"
-              id="proyecto"
-              (click)="onFiltrar()"
-            >
-              <option value="" disabled selected>Selecciona un proyecto</option>
-              <option *ngFor="let item of proyectos" [value]="item.id">
-                {{ item.nombre }}
-              </option>
-            </select>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('proyecto'); $event.stopPropagation(); onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="filtro-item position-relative">
-            <label for="fechaCierre" class="form-label">
-              <i class="bi bi-calendar-check"></i> Fecha de Cierre:
-            </label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="fechaCierre"
-              id="fechaCierre"
-              (click)="onFiltrar()"
-            />
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('fechaCierre');
-                $event.stopPropagation();
-                onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="filtro-item position-relative">
-            <label for="fechaRegistro" class="form-label">
-              <i class="bi bi-calendar-plus"></i> Fecha de Registro:
-            </label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="fechaRegistro"
-              id="fechaRegistro"
-              (click)="onFiltrar()"
-            />
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="
-                clearFilter('fechaRegistro');
-                $event.stopPropagation();
-                onFiltrar()
-              "
-            ></button>
-          </li>
-
-          <li class="d-flex mt-3">
-            <button class="btn btn-outline-danger" (click)="borrarFiltros()">
-              Borrar filtros
-            </button>
-          </li>
-        </div>
-      </ul>
+        <option value="fechaCierre" selected>
+          Fecha de Cierre (más cercana)
+        </option>
+        <option value="prioridad">Prioridad</option>
+        <option value="responsable">Responsable</option>
+        <option value="estado">Estado</option>
+        <option value="proyecto">Proyecto</option>
+      </select>
     </div>
-  </form>
+  </div>
 
   <!--Muestra tareas-->
   <div class="row gy-4">
-    <div class="col-md-4" *ngFor="let tarea of tareas">
+    <div
+      *ngIf="tareas && tareas.length === 0"
+      class="alert alert-warning text-center"
+    >
+      <h2>No hay tareas que mostrar</h2>
+    </div>
+
+    <div
+      class="col-md-4"
+      *ngFor="
+        let tarea of tareas | paginate : { itemsPerPage: 6, currentPage: page }
+      "
+    >
       <div class="card h-100">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">{{ tarea.nombre }}</h5>
@@ -247,7 +98,29 @@
   </div>
   <!--Muestra tareas-->
 
-  <!-- Modal para la confirmación de eliminación fuera del *ngFor -->
+  <!-- Paginación -->
+  <div *ngIf="tareas && tareas.length !== 0">
+    <div class="d-flex justify-content-center mt-3">
+      <pagination-controls
+        (pageChange)="page = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [maxSize]="5"
+        class="pagination-custom"
+      ></pagination-controls>
+    </div>
+  </div>
+
+  <!-- Boton para generar PDF -->
+  <button
+    class="btn btn-success ms-auto d-flex align-items-center mb-2 p-3"
+    (click)="generarPDF()"
+    *ngIf="tareas && tareas.length > 0"
+  >
+    <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+  </button>
+
+  <!-- Modal para la confirmación de eliminación -->
   <div
     class="modal fade"
     id="exampleModal2"
@@ -296,16 +169,19 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Crear nueva tarea.</h5>
+        <h5 class="modal-title" id="exampleModalLabel">
+          Crear o modificar tarea.
+        </h5>
         <button
           type="button"
-          class="btn-close"
+          class="btn-close m-2"
           data-bs-dismiss="modal"
           aria-label="Close"
+          (click)="cerrar()"
         ></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="tareaForm">
+        <form [formGroup]="tareaForm" class="needs-validation was-validate">
           <!-- Nombre -->
           <div class="form-group">
             <label for="nombre">Nombre</label>
@@ -314,6 +190,11 @@
               id="nombre"
               formControlName="nombre"
               class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  nombre.invalid && (nombre.dirty || nombre.touched),
+                'is-valid': nombre.valid && (nombre.dirty || nombre.touched)
+              }"
             />
           </div>
           <!-- Prioridad -->
@@ -406,7 +287,6 @@
     </div>
   </div>
 </div>
-<!--Muestra modal para crear tarea-->
 
 <!--Muestra notificacion segun si agregamos o eliminamos tareas-->
 <div
@@ -427,7 +307,7 @@
       <strong class="me-auto">Gestor.</strong>
       <button
         type="button"
-        class="btn-close"
+        class="btn-close m-4"
         data-bs-dismiss="toast"
         aria-label="Close"
       ></button>
@@ -435,8 +315,185 @@
     <div class="toast-body"></div>
   </div>
 </div>
-<!--Muestra notificacion segun si agregamos o eliminamos tareas-->
 
-<!-- Boton para pdf -->
+<!-- Offcanvas -->
+<div
+  class="offcanvas offcanvas-start"
+  tabindex="-1"
+  id="offcanvasFilters"
+  aria-labelledby="offcanvasFiltersLabel"
+>
+  <div class="offcanvas-header">
+    <h5 id="offcanvasFiltersLabel" class="fw-bold">Filtrar por</h5>
+    <button
+      type="button"
+      class="btn-close m-2"
+      data-bs-dismiss="offcanvas"
+      aria-label="Cerrar"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <form [formGroup]="filtroForm" class="d-grid gap-3">
+      <!-- Responsable -->
+      <div class="filter-group position-relative">
+        <label for="responsable" class="form-label d-flex align-items-center">
+          <i class="bi bi-person-circle me-2"></i> Responsable:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="responsable"
+            id="responsable"
+            (click)="onFiltrar()"
+          >
+            <option value="" selected disabled>
+              Selecciona un responsable
+            </option>
+            <option *ngFor="let item of responsables" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('responsable'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
 
-<button class="btn btn-primary" (click)="generarPDF()">Generar PDF</button>
+      <!-- Prioridad -->
+      <div class="filter-group position-relative">
+        <label for="prioridad" class="form-label d-flex align-items-center">
+          <i class="bi bi-flag-fill me-2"></i> Prioridad:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="prioridad"
+            id="prioridad"
+            (click)="onFiltrar()"
+          >
+            <option value="" disabled selected>Selecciona una prioridad</option>
+            <option *ngFor="let item of prioridades" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('prioridad'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Estado -->
+      <div class="filter-group position-relative">
+        <label for="estado" class="form-label d-flex align-items-center">
+          <i class="bi bi-check-circle-fill me-2"></i> Estado:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="estado"
+            id="estado"
+            (click)="onFiltrar()"
+          >
+            <option value="" disabled selected>Selecciona un estado</option>
+            <option *ngFor="let item of estados" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('estado'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Proyecto -->
+      <div class="filter-group position-relative">
+        <label for="proyecto" class="form-label d-flex align-items-center">
+          <i class="bi bi-folder-fill me-2"></i> Proyecto:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="proyecto"
+            id="proyecto"
+            (click)="onFiltrar()"
+          >
+            <option value="" disabled selected>Selecciona un proyecto</option>
+            <option *ngFor="let item of proyectos" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('proyecto'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Fecha de Cierre -->
+      <div class="filter-group position-relative">
+        <label for="fechaCierre" class="form-label d-flex align-items-center">
+          <i class="bi bi-calendar-check me-2"></i> Fecha de Cierre:
+        </label>
+        <div class="d-flex align-items-center">
+          <input
+            type="date"
+            class="form-control flex-grow-1"
+            formControlName="fechaCierre"
+            id="fechaCierre"
+            (click)="onFiltrar()"
+          />
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('fechaCierre'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Fecha de Registro -->
+      <div class="filter-group position-relative">
+        <label for="fechaRegistro" class="form-label d-flex align-items-center">
+          <i class="bi bi-calendar-plus me-2"></i> Fecha de Registro:
+        </label>
+        <div class="d-flex align-items-center">
+          <input
+            type="date"
+            class="form-control flex-grow-1"
+            formControlName="fechaRegistro"
+            id="fechaRegistro"
+            (click)="onFiltrar()"
+          />
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('fechaRegistro'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Borrar Filtros -->
+      <div class="text-center mt-3">
+        <button
+          type="button"
+          class="btn btn-outline-danger w-100"
+          (click)="borrarFiltros()"
+        >
+          Borrar filtros
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

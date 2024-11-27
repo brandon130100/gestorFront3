@@ -11,6 +11,7 @@ import { ResponsableComponent } from './components/responsable/responsable.compo
 import { ProyectoComponent } from './components/proyecto/proyecto.component';
 import { DepartamentoComponent } from './components/departamento/departamento.component';
 import { PuestoComponent } from './components/puesto/puesto.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { PuestoComponent } from './components/puesto/puesto.component';
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgxPaginationModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -22,25 +22,6 @@ export class TareasService {
     return this.httpClient.delete(this.API_SERVER + '/delete/' + id);
   }
 
-  // public getTareasByPriority(priorityId: number): Observable<any> {
-  //   return this.httpClient.get(`${this.API_SERVER}?prioridadId=${priorityId}`);
-  // }
-
-  // public getTareasByResponsable(responsableId: number): Observable<any> {
-  //   return this.httpClient.get(
-  //     `${this.API_SERVER}?responsableId=${responsableId}`
-  //   );
-  // }
-
-  // public getTareasByPriorityAndResponsable(
-  //   priorityId: number,
-  //   responsableId: number
-  // ): Observable<any> {
-  //   return this.httpClient.get(
-  //     `${this.API_SERVER}?responsableId=${responsableId}&prioridadId=${priorityId}`
-  //   );
-  // }
-
   public filtrarTareas(
     priorityId?: number | null,
     responsableId?: number | null,
@@ -50,10 +31,8 @@ export class TareasService {
     fechaRegistro?: string | null,
     ordenamiento?: string | null
   ): Observable<any> {
-    // Crea un objeto para almacenar los parámetros
     let params: any = {};
 
-    // Agrega los parámetros solo si no son nulos
     if (priorityId !== null) {
       params.prioridadId = priorityId;
     }
@@ -75,8 +54,6 @@ export class TareasService {
     if (ordenamiento !== null) {
       params.ordenamiento = ordenamiento;
     }
-
-    // Realiza la solicitud GET con los parámetros
     return this.httpClient.get(`${this.API_SERVER}`, { params });
   }
 }

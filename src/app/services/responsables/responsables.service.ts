@@ -21,4 +21,23 @@ export class ResponsablesService {
   public deleteResponsable(id: any): Observable<any> {
     return this.httpClient.delete(this.API_SERVER + '/delete/' + id);
   }
+
+  public filtrarResponsables(
+    departamentoId?: number | null,
+    puestoId?: number | null,
+    ordenamiento?: string | null
+  ): Observable<any> {
+    let params: any = {};
+
+    if (departamentoId !== null) {
+      params.departamentoId = departamentoId;
+    }
+    if (puestoId !== null) {
+      params.puestoId = puestoId;
+    }
+    if (ordenamiento !== null) {
+      params.ordenamiento = ordenamiento;
+    }
+    return this.httpClient.get(`${this.API_SERVER}`, { params });
+  }
 }

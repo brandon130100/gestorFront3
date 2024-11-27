@@ -1,118 +1,410 @@
-<div class="formularioRegistro">
-  <h2>Crear Responsable</h2>
-  <form [formGroup]="responsableForm" (ngSubmit)="guardar()">
-    <!-- Nombre -->
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input
-        type="text"
-        id="nombre"
-        formControlName="nombre"
-        class="form-control"
-      />
-    </div>
-    <!-- Apellido -->
-    <div class="form-group">
-      <label for="apellido">Apellido</label>
-      <input
-        type="text"
-        id="apellido"
-        formControlName="apellido"
-        class="form-control"
-      />
-    </div>
-    <!-- Correo -->
-    <div class="form-group">
-      <label for="correo">Correo</label>
-      <input
-        type="email"
-        id="correo"
-        formControlName="correo"
-        class="form-control"
-      />
-    </div>
-    <!-- Celular -->
-    <div class="form-group">
-      <label for="celular">Celular</label>
-      <input
-        type="text"
-        id="celular"
-        formControlName="celular"
-        class="form-control"
-      />
-    </div>
-    <!-- Departamento -->
-    <div class="form-group">
-      <label for="departamento">Departamento</label>
-      <select
-        name="departamento"
-        id="departamento"
-        formControlName="departamento"
-        class="form-control"
-      >
-        <option [ngValue]="item" *ngFor="let item of departamentos">
-          {{ item.nombre }}
-        </option>
-      </select>
-    </div>
-    <!-- Puesto -->
-    <div class="form-group">
-      <label for="puesto">Puesto</label>
-      <select
-        name="puesto"
-        id="puesto"
-        formControlName="puesto"
-        class="form-control"
-      >
-        <option [ngValue]="item" *ngFor="let item of puestos">
-          {{ item.nombre }}
-        </option>
-      </select>
-    </div>
+<div class="container mt-1">
+  <div class="d-flex justify-content-between align-items-center mb-2 p-2">
+    <h1>Responsables</h1>
 
-    <!-- Boton -->
+    <!-- Boton para crear tareas-->
     <button
-      type="submit"
-      class="btn btn-primary mt-2"
-      [disabled]="responsableForm.invalid"
+      type="button"
+      class="btn btn-primary ms-auto p-2 rounded-pill shadow-sm"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
     >
-      Guardar
+      Nuevo Responsable
     </button>
-  </form>
-</div>
+  </div>
+  <!--Muestra boton para agregar tarea-->
 
-<div class="formularioRegistro">
-  <h2>Responsables Guardados</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Correo</th>
-        <th>Celular</th>
-        <th>Departamento</th>
-        <th>Puesto</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of responsables">
-        <td>{{ item.id }}</td>
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.apellido }}</td>
-        <td>{{ item.correo }}</td>
-        <td>{{ item.celular }}</td>
-        <td>{{ item.departamento.nombre }}</td>
-        <td>{{ item.puesto.nombre }}</td>
-        <td>
-          <button type="button" class="btn btn-danger" (click)="eliminar(item)">
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <!-- Offcanvas para filtrar -->
+    <button
+      class="btn btn-outline-none bg-transparent d-flex align-items-center"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasFilters"
+      aria-controls="offcanvasFilters"
+    >
+      <i class="bi bi-funnel me-2"></i>Filtrar
+    </button>
+
+    <!-- Ordenamiento -->
+    <div class="d-flex align-items-center">
+      <i class="bi bi-arrow-down-up me-2"></i>
+      <select
+        id="ordenamiento"
+        class="form-select form-select-sm bg-transparent border-secondary"
+        [(ngModel)]="criterioOrdenamiento"
+        (click)="onFiltrar()"
+      >
+        <option value="departamento" selected>Departamento</option>
+        <option value="puesto">Puesto</option>
+      </select>
+    </div>
+  </div>
+
+  <!--Muestra tareas-->
+  <div class="row gy-4">
+    <div
+      *ngIf="departamentos && departamentos.length === 0"
+      class="alert alert-warning text-center"
+    >
+      <h2>No hay tareas que mostrar</h2>
+    </div>
+
+    <div
+      class="col-md-4"
+      *ngFor="
+        let responsable of responsables
+          | paginate : { itemsPerPage: 6, currentPage: page }
+      "
+    >
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">
+            {{ responsable.nombre }} {{ responsable.apellido }}
+          </h5>
+          <p class="card-text">Correo: {{ responsable.correo }}</p>
+          <p class="card-text">Celular: {{ responsable.celular }}</p>
+          <p class="card-text">
+            Departamento: {{ responsable.departamento.nombre }}
+          </p>
+          <p class="card-text">Puesto: {{ responsable.puesto.nombre }}</p>
+
+          <div class="mt-auto d-flex justify-content-between">
+            <button
+              class="btn btn-primary"
+              (click)="editar(responsable)"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-danger"
+              (click)="seleccionarResponsable(responsable)"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal2"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Muestra tareas-->
+
+  <!-- Paginación -->
+  <div *ngIf="responsables && responsables.length !== 0">
+    <div class="d-flex justify-content-center mt-3">
+      <pagination-controls
+        (pageChange)="page = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [maxSize]="5"
+        class="pagination-custom"
+      ></pagination-controls>
+    </div>
+  </div>
+
+  <!-- Boton para generar PDF -->
+  <button
+    class="btn btn-success ms-auto d-flex align-items-center mb-2 p-3"
+    (click)="generarPDF()"
+    *ngIf="responsables && responsables.length > 0"
+  >
+    <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+  </button>
+
+  <!-- Modal para la confirmación de eliminación -->
+  <div
+    class="modal fade"
+    id="exampleModal2"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel2"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">
+            Eliminar Responsable
+          </h5>
+        </div>
+        <div class="modal-body">
+          Seguro que deseas eliminar el Responsable:
+          {{ responsableSeleccionado?.nombre }}
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            (click)="eliminar(responsableSeleccionado)"
+            data-bs-dismiss="modal"
+          >
             Eliminar
           </button>
-          <button type="button" class="btn btn-success" (click)="editar(item)">
-            Editar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Muestra modal para crear tarea-->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          Crear o modificar Responsable.
+        </h5>
+        <button
+          type="button"
+          class="btn-close m-2"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="cerrar()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          [formGroup]="responsableForm"
+          class="needs-validation was-validate"
+        >
+          <!-- Nombre -->
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input
+              type="text"
+              id="nombre"
+              formControlName="nombre"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  nombre.invalid && (nombre.dirty || nombre.touched),
+                'is-valid': nombre.valid && (nombre.dirty || nombre.touched)
+              }"
+            />
+          </div>
+          <!-- Apellido -->
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input
+              type="text"
+              id="apellido"
+              formControlName="apellido"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  apellido.invalid && (apellido.dirty || apellido.touched),
+                'is-valid':
+                  apellido.valid && (apellido.dirty || apellido.touched)
+              }"
+            />
+          </div>
+          <!-- Correo -->
+          <div class="form-group">
+            <label for="correo">Correo</label>
+            <input
+              type="email"
+              id="correo"
+              formControlName="correo"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  correo.invalid && (correo.dirty || correo.touched),
+                'is-valid': correo.valid && (correo.dirty || correo.touched)
+              }"
+            />
+          </div>
+          <!-- Celular -->
+          <div class="form-group">
+            <label for="celular">Celular</label>
+            <input
+              type="text"
+              id="celular"
+              formControlName="celular"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  celular.invalid && (celular.dirty || celular.touched),
+                'is-valid': celular.valid && (celular.dirty || celular.touched)
+              }"
+            />
+          </div>
+          <!-- Departamento -->
+          <div class="form-group">
+            <label for="departamento">Departamento</label>
+            <select
+              name="departamento"
+              id="departamento"
+              formControlName="departamento"
+              class="form-control"
+            >
+              <option [ngValue]="item" *ngFor="let item of departamentos">
+                {{ item.nombre }}
+              </option>
+            </select>
+          </div>
+          <!-- Puesto -->
+          <div class="form-group">
+            <label for="puesto">Puesto</label>
+            <select
+              name="puesto"
+              id="puesto"
+              formControlName="puesto"
+              class="form-control"
+            >
+              <option [ngValue]="item" *ngFor="let item of puestos">
+                {{ item.nombre }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="cerrar()"
+        >
+          Cerrar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="responsableForm.invalid"
+          (click)="guardar()"
+          data-bs-dismiss="modal"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Muestra notificacion segun si agregamos o eliminamos tareas-->
+<div
+  class="toast-container position-fixed bottom-0 end-0 p-3"
+  style="z-index: 11"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div
+    id="taskToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-bs-delay="3000"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">Gestor.</strong>
+      <button
+        type="button"
+        class="btn-close m-4"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body"></div>
+  </div>
+</div>
+
+<!-- Offcanvas -->
+<div
+  class="offcanvas offcanvas-start"
+  tabindex="-1"
+  id="offcanvasFilters"
+  aria-labelledby="offcanvasFiltersLabel"
+>
+  <div class="offcanvas-header">
+    <h5 id="offcanvasFiltersLabel" class="fw-bold">Filtrar por</h5>
+    <button
+      type="button"
+      class="btn-close m-2"
+      data-bs-dismiss="offcanvas"
+      aria-label="Cerrar"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <form [formGroup]="filtroForm" class="d-grid gap-3">
+      <!-- Departamento -->
+      <div class="filter-group position-relative">
+        <label for="departamento" class="form-label d-flex align-items-center">
+          <i class="bi bi-person-circle me-2"></i> Departamento:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="departamento"
+            id="departamento"
+            (click)="onFiltrar()"
+          >
+            <option value="" selected disabled>
+              Selecciona un departamento
+            </option>
+            <option *ngFor="let item of departamentos" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('departamento'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Puesto -->
+      <div class="filter-group position-relative">
+        <label for="puesto" class="form-label d-flex align-items-center">
+          <i class="bi bi-flag-fill me-2"></i> Puesto:
+        </label>
+        <div class="d-flex align-items-center">
+          <select
+            class="form-select flex-grow-1"
+            formControlName="puesto"
+            id="puesto"
+            (click)="onFiltrar()"
+          >
+            <option value="" disabled selected>Selecciona un puesto</option>
+            <option *ngFor="let item of puestos" [value]="item.id">
+              {{ item.nombre }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn-close ms-2"
+            aria-label="Borrar"
+            (click)="clearFilter('puesto'); onFiltrar()"
+          ></button>
+        </div>
+      </div>
+      <!-- Borrar Filtros -->
+      <div class="text-center mt-3">
+        <button
+          type="button"
+          class="btn btn-outline-danger w-100"
+          (click)="borrarFiltros()"
+        >
+          Borrar filtros
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
