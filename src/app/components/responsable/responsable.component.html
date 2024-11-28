@@ -1,151 +1,96 @@
-<div class="container mt-1">
+<div class="container">
   <div class="d-flex justify-content-between align-items-center mb-2 p-2">
-    <h1>Responsables</h1>
-
-    <!-- Boton para crear tareas-->
-    <button
-      type="button"
-      class="btn btn-primary ms-auto p-2 rounded-pill shadow-sm"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      Nuevo Responsable
-    </button>
-  </div>
-  <!--Muestra boton para agregar tarea-->
-
-  <div class="d-flex align-items-center justify-content-between mb-2">
-    <!-- Offcanvas para filtrar -->
-    <button
-      class="btn btn-outline-none bg-transparent d-flex align-items-center"
-      data-bs-toggle="offcanvas"
-      data-bs-target="#offcanvasFilters"
-      aria-controls="offcanvasFilters"
-    >
-      <i class="bi bi-funnel me-2"></i>Filtrar
-    </button>
-
-    <!-- Ordenamiento -->
-    <div class="d-flex align-items-center">
-      <i class="bi bi-arrow-down-up me-2"></i>
-      <select
-        id="ordenamiento"
-        class="form-select form-select-sm bg-transparent border-secondary"
-        [(ngModel)]="criterioOrdenamiento"
-        (click)="onFiltrar()"
+    <h1 class="mb-0">Responsables</h1>
+    <div class="d-flex">
+      <!-- Botón para generar PDF -->
+      <button
+        class="btn btn-success me-2 d-flex align-items-center"
+        (click)="generarPDF()"
+        *ngIf="responsables && responsables.length > 0"
       >
-        <option value="departamento" selected>Departamento</option>
-        <option value="puesto">Puesto</option>
-      </select>
+        <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+      </button>
+      <!-- Botón para crear responsables -->
+      <button
+        type="button"
+        class="btn btn-primary d-flex align-items-center"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        <i class="bi bi-plus-circle me-2"></i> Nuevo Responsable
+      </button>
     </div>
   </div>
+</div>
 
-  <!--Muestra tareas-->
-  <div class="row gy-4">
-    <div
-      *ngIf="departamentos && departamentos.length === 0"
-      class="alert alert-warning text-center"
-    >
-      <h2>No hay tareas que mostrar</h2>
-    </div>
-
-    <div
-      class="col-md-4"
-      *ngFor="
-        let responsable of responsables
-          | paginate : { itemsPerPage: 6, currentPage: page }
-      "
-    >
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">
-            {{ responsable.nombre }} {{ responsable.apellido }}
-          </h5>
-          <p class="card-text">Correo: {{ responsable.correo }}</p>
-          <p class="card-text">Celular: {{ responsable.celular }}</p>
-          <p class="card-text">
-            Departamento: {{ responsable.departamento.nombre }}
-          </p>
-          <p class="card-text">Puesto: {{ responsable.puesto.nombre }}</p>
-
-          <div class="mt-auto d-flex justify-content-between">
-            <button
-              class="btn btn-primary"
-              (click)="editar(responsable)"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              Editar
-            </button>
-            <button
-              class="btn btn-danger"
-              (click)="seleccionarResponsable(responsable)"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal2"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--Muestra tareas-->
-
-  <!-- Paginación -->
-  <div *ngIf="responsables && responsables.length !== 0">
-    <div class="d-flex justify-content-center mt-3">
-      <pagination-controls
-        (pageChange)="page = $event"
-        previousLabel="Anterior"
-        nextLabel="Siguiente"
-        [maxSize]="5"
-        class="pagination-custom"
-      ></pagination-controls>
-    </div>
-  </div>
-
-  <!-- Boton para generar PDF -->
+<div class="d-flex align-items-center justify-content-between mb-2">
+  <!-- Offcanvas para filtrar -->
   <button
-    class="btn btn-success ms-auto d-flex align-items-center mb-2 p-3"
-    (click)="generarPDF()"
-    *ngIf="responsables && responsables.length > 0"
+    class="btn btn-outline-none bg-transparent d-flex align-items-center"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvasFilters"
+    aria-controls="offcanvasFilters"
   >
-    <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+    <i class="bi bi-funnel me-2"></i>Filtrar
   </button>
 
-  <!-- Modal para la confirmación de eliminación -->
+  <!-- Ordenamiento -->
+  <div class="d-flex align-items-center">
+    <i class="bi bi-arrow-down-up me-2"></i>
+    <select
+      id="ordenamiento"
+      class="form-select form-select-sm bg-transparent border-secondary"
+      [(ngModel)]="criterioOrdenamiento"
+      (click)="onFiltrar()"
+    >
+      <option value="departamento" selected>Departamento</option>
+      <option value="puesto">Puesto</option>
+    </select>
+  </div>
+</div>
+
+<!--Muestra responsables-->
+<div class="row gy-4">
   <div
-    class="modal fade"
-    id="exampleModal2"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel2"
-    aria-hidden="true"
+    *ngIf="responsables && responsables.length === 0"
+    class="alert alert-warning text-center"
   >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel2">
-            Eliminar Responsable
-          </h5>
-        </div>
-        <div class="modal-body">
-          Seguro que deseas eliminar el Responsable:
-          {{ responsableSeleccionado?.nombre }}
-        </div>
-        <div class="modal-footer">
+    <h2>No hay responsables que mostrar</h2>
+  </div>
+
+  <div
+    class="col-md-4"
+    *ngFor="
+      let responsable of responsables
+        | paginate : { itemsPerPage: 6, currentPage: page }
+    "
+  >
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">
+          {{ responsable.nombre }} {{ responsable.apellido }}
+        </h5>
+        <p class="card-text">Correo: {{ responsable.correo }}</p>
+        <p class="card-text">Celular: {{ responsable.celular }}</p>
+        <p class="card-text">
+          Departamento: {{ responsable.departamento.nombre }}
+        </p>
+        <p class="card-text">Puesto: {{ responsable.puesto.nombre }}</p>
+
+        <div class="mt-auto d-flex justify-content-between">
           <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
+            class="btn btn-primary"
+            (click)="editar(responsable)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
           >
-            Cancelar
+            Editar
           </button>
           <button
-            type="submit"
-            class="btn btn-primary"
-            (click)="eliminar(responsableSeleccionado)"
-            data-bs-dismiss="modal"
+            class="btn btn-danger"
+            (click)="seleccionarResponsable(responsable)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal2"
           >
             Eliminar
           </button>
@@ -155,7 +100,62 @@
   </div>
 </div>
 
-<!--Muestra modal para crear tarea-->
+<!-- Paginación -->
+<div *ngIf="responsables && responsables.length !== 0">
+  <div class="d-flex justify-content-center mt-3">
+    <pagination-controls
+      (pageChange)="page = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [maxSize]="5"
+      class="pagination-custom"
+    ></pagination-controls>
+  </div>
+</div>
+
+<!-- Modal para la confirmación de eliminación -->
+<div
+  class="modal fade"
+  id="exampleModal2"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel2"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">
+          Eliminar Responsable
+        </h5>
+      </div>
+      <div class="modal-body">
+        <p>
+          ¿Seguro que deseas eliminar el Responsable:
+          {{ responsableSeleccionado?.nombre }}?
+        </p>
+        <p>
+          Si elimina el responsable, se eliminaran las tareas asociadas al
+          responsable.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="eliminar(responsableSeleccionado)"
+          data-bs-dismiss="modal"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Muestra modal para crear responsable-->
 <div
   class="modal fade"
   id="exampleModal"
@@ -183,7 +183,7 @@
           class="needs-validation was-validate"
         >
           <!-- Nombre -->
-          <div class="form-group">
+          <div class="form-group flex-nowrap">
             <label for="nombre">Nombre</label>
             <input
               type="text"
@@ -196,6 +196,17 @@
                 'is-valid': nombre.valid && (nombre.dirty || nombre.touched)
               }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+            >
+              <span *ngIf="nombre.errors?.['required']">
+                El nombre es obligatorio.
+              </span>
+              <span *ngIf="nombre.errors?.['pattern']">
+                El nombre debe tener al menos 3 letras.
+              </span>
+            </div>
           </div>
           <!-- Apellido -->
           <div class="form-group">
@@ -212,6 +223,17 @@
                   apellido.valid && (apellido.dirty || apellido.touched)
               }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)"
+            >
+              <span *ngIf="apellido.errors?.['required']">
+                El apellido es obligatorio.
+              </span>
+              <span *ngIf="apellido.errors?.['pattern']">
+                El apellido debe tener al menos 3 letras.
+              </span>
+            </div>
           </div>
           <!-- Correo -->
           <div class="form-group">
@@ -227,6 +249,19 @@
                 'is-valid': correo.valid && (correo.dirty || correo.touched)
               }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="correo.invalid && (correo.dirty || correo.touched)"
+            >
+              <span *ngIf="correo.errors?.['required']">
+                El correo es obligatorio.
+              </span>
+              <span
+                *ngIf="correo.errors?.['pattern'] || correo.errors?.['email']"
+              >
+                El correo debe tener formato correcto.
+              </span>
+            </div>
           </div>
           <!-- Celular -->
           <div class="form-group">
@@ -242,6 +277,19 @@
                 'is-valid': celular.valid && (celular.dirty || celular.touched)
               }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="celular.invalid && (celular.dirty || celular.touched)"
+            >
+              <span *ngIf="celular.errors?.['required']">
+                El celular es obligatorio.
+              </span>
+              <span
+                *ngIf="celular.errors?.['pattern'] || celular.errors?.['email']"
+              >
+                El celular debe tener formato correcto.
+              </span>
+            </div>
           </div>
           <!-- Departamento -->
           <div class="form-group">
@@ -296,7 +344,7 @@
   </div>
 </div>
 
-<!--Muestra notificacion segun si agregamos o eliminamos tareas-->
+<!--Muestra notificacion segun si agregamos o eliminamos responsables-->
 <div
   class="toast-container position-fixed bottom-0 end-0 p-3"
   style="z-index: 11"

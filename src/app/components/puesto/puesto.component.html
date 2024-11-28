@@ -1,50 +1,240 @@
-<div class="formularioRegistro">
-  <h2>Crear Puesto</h2>
-  <form [formGroup]="puestoForm" (ngSubmit)="guardar()">
-    <!-- Nombre -->
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input
-        type="text"
-        id="nombre"
-        formControlName="nombre"
-        class="form-control"
-      />
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-2 p-2">
+    <h1 class="mb-0">Puestos</h1>
+    <div class="d-flex">
+      <!-- Botón para generar PDF -->
+      <button
+        class="btn btn-success me-2 d-flex align-items-center"
+        (click)="generarPDF()"
+        *ngIf="puestos && puestos.length > 0"
+      >
+        <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+      </button>
+      <!-- Botón para crear puestos -->
+      <button
+        type="button"
+        class="btn btn-primary d-flex align-items-center"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        <i class="bi bi-plus-circle me-2"></i> Nuevo Puesto
+      </button>
     </div>
-
-    <!-- Boton -->
-    <button
-      type="submit"
-      class="btn btn-primary mt-2"
-      [disabled]="puestoForm.invalid"
-    >
-      Guardar
-    </button>
-  </form>
+  </div>
 </div>
 
-<div class="formularioRegistro">
-  <h2>Puestos Guardados</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of puestos">
-        <td>{{ item.id }}</td>
-        <td>{{ item.nombre }}</td>
-        <td>
-          <button type="button" class="btn btn-danger" (click)="eliminar(item)">
-            Eliminar
-          </button>
-          <button type="button" class="btn btn-success" (click)="editar(item)">
+<div class="d-flex align-items-center justify-content-end mb-2">
+  <!-- Ordenamiento -->
+  <div class="d-flex align-items-center">
+    <i class="bi bi-arrow-down-up me-2"></i>
+    <select
+      id="ordenamiento"
+      class="form-select form-select-sm bg-transparent border-secondary"
+      [(ngModel)]="criterioOrdenamiento"
+      (click)="onFiltrar()"
+    >
+      <option value="nombreAsc" selected>Alfabetico Ascendente</option>
+      <option value="nombreDesc">Alfabetico Descendente</option>
+    </select>
+  </div>
+</div>
+
+<!--Muestra puestos-->
+<div class="row gy-4">
+  <div
+    *ngIf="puestos && puestos.length === 0"
+    class="alert alert-warning text-center"
+  >
+    <h2>No hay puestos que mostrar</h2>
+  </div>
+
+  <div
+    class="col-md-4"
+    *ngFor="
+      let puesto of puestos | paginate : { itemsPerPage: 9, currentPage: page }
+    "
+  >
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">
+          {{ puesto.nombre }}
+        </h5>
+
+        <div class="mt-auto d-flex justify-content-between">
+          <button
+            class="btn btn-primary"
+            (click)="editar(puesto)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
             Editar
           </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <button
+            class="btn btn-danger"
+            (click)="seleccionarPuesto(puesto)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal2"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Paginación -->
+<div *ngIf="puestos && puestos.length !== 0">
+  <div class="d-flex justify-content-center mt-3">
+    <pagination-controls
+      (pageChange)="page = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [maxSize]="5"
+      class="pagination-custom"
+    ></pagination-controls>
+  </div>
+</div>
+
+<!-- Modal para la confirmación de eliminación -->
+<div
+  class="modal fade"
+  id="exampleModal2"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel2"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">Eliminar Puesto</h5>
+      </div>
+      <div class="modal-body">
+        <p>
+          ¿Seguro que deseas eliminar el Puesto:
+          {{ puestoSeleccionado?.nombre }}?
+        </p>
+        <p>
+          Si elimina el puesto, se eliminaran a los responsables y tareas
+          asociadas al puesto.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="eliminar(puestoSeleccionado)"
+          data-bs-dismiss="modal"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Muestra modal para crear puesto-->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          Crear o modificar Puesto.
+        </h5>
+        <button
+          type="button"
+          class="btn-close m-2"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="cerrar()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="puestoForm" class="needs-validation was-validate">
+          <!-- Nombre -->
+          <div class="form-group flex-nowrap">
+            <label for="nombre">Nombre</label>
+            <input
+              type="text"
+              id="nombre"
+              formControlName="nombre"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  nombre.invalid && (nombre.dirty || nombre.touched),
+                'is-valid': nombre.valid && (nombre.dirty || nombre.touched)
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+            >
+              <span *ngIf="nombre.errors?.['required']">
+                El nombre es obligatorio.
+              </span>
+              <span *ngIf="nombre.errors?.['pattern']">
+                El nombre debe tener al menos 3 letras.
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="cerrar()"
+        >
+          Cerrar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="puestoForm.invalid"
+          (click)="guardar()"
+          data-bs-dismiss="modal"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Muestra notificacion segun si agregamos o eliminamos puestos -->
+<div
+  class="toast-container position-fixed bottom-0 end-0 p-3"
+  style="z-index: 11"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div
+    id="taskToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-bs-delay="3000"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">Gestor.</strong>
+      <button
+        type="button"
+        class="btn-close m-4"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body"></div>
+  </div>
 </div>

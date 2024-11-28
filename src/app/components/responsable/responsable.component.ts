@@ -52,10 +52,25 @@ export class ResponsableComponent implements OnInit {
   ngOnInit(): void {
     this.responsableForm = this.fb.group({
       id: [''],
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      correo: ['', Validators.required],
-      celular: ['', Validators.required],
+      nombre: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-Z0-9 ]{3,}')],
+      ],
+      apellido: [
+        '',
+        [Validators.required, Validators.pattern('[a-zA-Z0-9 ]{3,}')],
+      ],
+      correo: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+          ),
+        ],
+      ],
+      celular: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       departamento: ['', Validators.required],
       puesto: ['', Validators.required],
     });

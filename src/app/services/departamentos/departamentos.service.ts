@@ -21,4 +21,14 @@ export class DepartamentosService {
   public deleteDepartamento(id: any): Observable<any> {
     return this.httpClient.delete(this.API_SERVER + '/delete/' + id);
   }
+
+  public filtrarDepartamentos(ordenamiento?: string | null): Observable<any> {
+    let params: any = {};
+
+    if (ordenamiento !== null) {
+      params.ordenamiento = ordenamiento;
+    }
+
+    return this.httpClient.get(`${this.API_SERVER}`, { params });
+  }
 }

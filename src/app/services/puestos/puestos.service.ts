@@ -21,4 +21,14 @@ export class PuestosService {
   public deletePuesto(id: any): Observable<any> {
     return this.httpClient.delete(this.API_SERVER + '/delete/' + id);
   }
+
+  public filtrarPuestos(ordenamiento?: string | null): Observable<any> {
+    let params: any = {};
+
+    if (ordenamiento !== null) {
+      params.ordenamiento = ordenamiento;
+    }
+
+    return this.httpClient.get(`${this.API_SERVER}`, { params });
+  }
 }

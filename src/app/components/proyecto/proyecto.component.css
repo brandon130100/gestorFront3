@@ -1,5 +1,30 @@
-.formularioRegistro {
-  padding-left: 30%;
-  padding-right: 20%;
-  margin-top: 10%;
+.btn-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.filtro-item .form-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+  color: #333;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+  background-color: #f8d7da;
+}
+
+.is-valid {
+  border-color: #28a745;
+  background-color: #f4fcf8;
+}
+
+.card {
+  background-color: #f1f1f1;
+  color: #333333;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }

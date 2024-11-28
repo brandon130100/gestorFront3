@@ -1,158 +1,151 @@
-<div class="container mt-1">
+<div class="container">
   <div class="d-flex justify-content-between align-items-center mb-2 p-2">
-    <h1>Tareas</h1>
-
-    <!-- Boton para crear tareas-->
-    <button
-      type="button"
-      class="btn btn-primary ms-auto p-2 rounded-pill shadow-sm"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      Nueva Tarea
-    </button>
-  </div>
-  <!--Muestra boton para agregar tarea-->
-
-  <div class="d-flex align-items-center justify-content-between mb-2">
-    <!-- Offcanvas para filtrar -->
-    <button
-      class="btn btn-outline-none bg-transparent d-flex align-items-center"
-      data-bs-toggle="offcanvas"
-      data-bs-target="#offcanvasFilters"
-      aria-controls="offcanvasFilters"
-    >
-      <i class="bi bi-funnel me-2"></i>Filtrar
-    </button>
-
-    <!-- Ordenamiento -->
-    <div class="d-flex align-items-center">
-      <i class="bi bi-arrow-down-up me-2"></i>
-      <select
-        id="ordenamiento"
-        class="form-select form-select-sm bg-transparent border-secondary"
-        [(ngModel)]="criterioOrdenamiento"
-        (click)="onFiltrar()"
+    <h1 class="mb-0">Tareas</h1>
+    <div class="d-flex">
+      <!-- Botón para generar PDF -->
+      <button
+        class="btn btn-success me-2 d-flex align-items-center"
+        (click)="generarPDF()"
+        *ngIf="tareas && tareas.length > 0"
       >
-        <option value="fechaCierre" selected>
-          Fecha de Cierre (más cercana)
-        </option>
-        <option value="prioridad">Prioridad</option>
-        <option value="responsable">Responsable</option>
-        <option value="estado">Estado</option>
-        <option value="proyecto">Proyecto</option>
-      </select>
+        <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+      </button>
+      <!-- Botón para crear tareas -->
+      <button
+        type="button"
+        class="btn btn-primary d-flex align-items-center"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        <i class="bi bi-plus-circle me-2"></i> Nueva Tarea
+      </button>
     </div>
   </div>
+</div>
 
-  <!--Muestra tareas-->
-  <div class="row gy-4">
-    <div
-      *ngIf="tareas && tareas.length === 0"
-      class="alert alert-warning text-center"
-    >
-      <h2>No hay tareas que mostrar</h2>
-    </div>
-
-    <div
-      class="col-md-4"
-      *ngFor="
-        let tarea of tareas | paginate : { itemsPerPage: 6, currentPage: page }
-      "
-    >
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ tarea.nombre }}</h5>
-          <p class="card-text">Prioridad: {{ tarea.prioridad.nombre }}</p>
-          <p class="card-text">Estado: {{ tarea.estado.nombre }}</p>
-          <p class="card-text">Responsable: {{ tarea.responsable.nombre }}</p>
-          <p class="card-text">
-            Fecha de registro: {{ tarea.fechaRegistro | date }}
-          </p>
-          <p class="card-text">
-            Fecha de cierre: {{ tarea.fechaCierre | date }}
-          </p>
-          <p class="card-text">Proyecto: {{ tarea.proyecto.nombre }}</p>
-
-          <div class="mt-auto d-flex justify-content-between">
-            <button
-              class="btn btn-primary"
-              (click)="editar(tarea)"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              Editar
-            </button>
-            <button
-              class="btn btn-danger"
-              (click)="seleccionarTarea(tarea)"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal2"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--Muestra tareas-->
-
-  <!-- Paginación -->
-  <div *ngIf="tareas && tareas.length !== 0">
-    <div class="d-flex justify-content-center mt-3">
-      <pagination-controls
-        (pageChange)="page = $event"
-        previousLabel="Anterior"
-        nextLabel="Siguiente"
-        [maxSize]="5"
-        class="pagination-custom"
-      ></pagination-controls>
-    </div>
-  </div>
-
-  <!-- Boton para generar PDF -->
+<div class="d-flex align-items-center justify-content-between mb-2">
+  <!-- Offcanvas para filtrar -->
   <button
-    class="btn btn-success ms-auto d-flex align-items-center mb-2 p-3"
-    (click)="generarPDF()"
-    *ngIf="tareas && tareas.length > 0"
+    class="btn btn-outline-none bg-transparent d-flex align-items-center"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvasFilters"
+    aria-controls="offcanvasFilters"
   >
-    <i class="bi bi-file-earmark-pdf me-2"></i> Generar PDF
+    <i class="bi bi-funnel me-2"></i>Filtrar
   </button>
 
-  <!-- Modal para la confirmación de eliminación -->
+  <!-- Ordenamiento -->
+  <div class="d-flex align-items-center">
+    <i class="bi bi-arrow-down-up me-2"></i>
+    <select
+      id="ordenamiento"
+      class="form-select form-select-sm bg-transparent border-secondary"
+      [(ngModel)]="criterioOrdenamiento"
+      (click)="onFiltrar()"
+    >
+      <option value="fechaCierre" selected>
+        Fecha de Cierre (más cercana)
+      </option>
+      <option value="prioridad">Prioridad</option>
+      <option value="responsable">Responsable</option>
+      <option value="estado">Estado</option>
+      <option value="proyecto">Proyecto</option>
+    </select>
+  </div>
+</div>
+
+<!--Muestra tareas-->
+<div class="row gy-4">
   <div
-    class="modal fade"
-    id="exampleModal2"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel2"
-    aria-hidden="true"
+    *ngIf="tareas && tareas.length === 0"
+    class="alert alert-warning text-center"
   >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel2">Eliminar tarea</h5>
-        </div>
-        <div class="modal-body">
-          Seguro que deseas eliminar la tarea: {{ tareaSeleccionada?.nombre }}
-        </div>
-        <div class="modal-footer">
+    <h2>No hay tareas que mostrar</h2>
+  </div>
+
+  <div
+    class="col-md-4"
+    *ngFor="
+      let tarea of tareas | paginate : { itemsPerPage: 6, currentPage: page }
+    "
+  >
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ tarea.nombre }}</h5>
+        <p class="card-text">Prioridad: {{ tarea.prioridad.nombre }}</p>
+        <p class="card-text">Estado: {{ tarea.estado.nombre }}</p>
+        <p class="card-text">Responsable: {{ tarea.responsable.nombre }}</p>
+        <p class="card-text">
+          Fecha de registro: {{ tarea.fechaRegistro | date }}
+        </p>
+        <p class="card-text">Fecha de cierre: {{ tarea.fechaCierre | date }}</p>
+        <p class="card-text">Proyecto: {{ tarea.proyecto.nombre }}</p>
+
+        <div class="mt-auto d-flex justify-content-between">
           <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
+            class="btn btn-primary"
+            (click)="editar(tarea)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
           >
-            Cancelar
+            Editar
           </button>
           <button
-            type="submit"
-            class="btn btn-primary"
-            (click)="eliminar(tareaSeleccionada)"
-            data-bs-dismiss="modal"
+            class="btn btn-danger"
+            (click)="seleccionarTarea(tarea)"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal2"
           >
             Eliminar
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Muestra tareas-->
+
+<!-- Paginación -->
+<div *ngIf="tareas && tareas.length !== 0">
+  <div class="d-flex justify-content-center mt-3">
+    <pagination-controls
+      (pageChange)="page = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [maxSize]="5"
+      class="pagination-custom"
+    ></pagination-controls>
+  </div>
+</div>
+
+<!-- Modal para la confirmación de eliminación -->
+<div
+  class="modal fade"
+  id="exampleModal2"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel2"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">Eliminar tarea</h5>
+      </div>
+      <div class="modal-body">
+        Seguro que deseas eliminar la tarea: {{ tareaSeleccionada?.nombre }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="eliminar(tareaSeleccionada)"
+          data-bs-dismiss="modal"
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   </div>
@@ -196,6 +189,17 @@
                 'is-valid': nombre.valid && (nombre.dirty || nombre.touched)
               }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+            >
+              <span *ngIf="nombre.errors?.['required']">
+                El nombre es obligatorio.
+              </span>
+              <span *ngIf="nombre.errors?.['pattern']">
+                El nombre debe tener al menos 3 letras.
+              </span>
+            </div>
           </div>
           <!-- Prioridad -->
           <div class="form-group">
@@ -247,7 +251,29 @@
               id="fechaCierre"
               formControlName="fechaCierre"
               class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  fechaCierre.invalid &&
+                  (fechaCierre.dirty || fechaCierre.touched),
+                'is-valid':
+                  fechaCierre.valid &&
+                  (fechaCierre.dirty || fechaCierre.touched)
+              }"
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                fechaCierre.invalid &&
+                (fechaCierre.dirty || fechaCierre.touched)
+              "
+            >
+              <span *ngIf="fechaCierre.errors?.['required']">
+                La fecha es obligatoria.
+              </span>
+              <span *ngIf="fechaCierre.errors?.['fechaInvalida']">
+                La fecha debe de ser posterior a hoy.
+              </span>
+            </div>
           </div>
           <!-- Proyecto -->
           <div class="form-group">

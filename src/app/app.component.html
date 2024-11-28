@@ -1,10 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Gestión de Proyectos</a>
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm p-3">
+  <a class="navbar-brand d-flex align-items-center" href="#">
+    <i class="bi bi-kanban me-2"></i> Gestión de Proyectos
+  </a>
   <button
     class="navbar-toggler"
     type="button"
-    data-toggle="collapse"
-    data-target="#navbarNav"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarNav"
     aria-controls="navbarNav"
     aria-expanded="false"
     aria-label="Toggle navigation"
@@ -12,38 +16,51 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
+    <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/tareas" routerLinkActive="active"
-          >Tareas</a
-        >
+        <a class="nav-link" routerLink="/tareas" routerLinkActive="active">
+          <i class="bi bi-check-circle-fill"></i> Tareas
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/responsables" routerLinkActive="active"
-          >Responsables</a
+        <a
+          class="nav-link"
+          routerLink="/responsables"
+          routerLinkActive="active"
         >
+          <i class="bi bi-person-fill"></i> Responsables
+        </a>
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
           routerLink="/departamentos"
           routerLinkActive="active"
-          >Departamentos</a
         >
+          <i class="bi bi-building"></i> Departamentos
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/puestos" routerLinkActive="active"
-          >Puestos</a
-        >
+        <a class="nav-link" routerLink="/puestos" routerLinkActive="active">
+          <i class="bi bi-briefcase-fill"></i> Puestos
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/proyectos" routerLinkActive="active"
-          >Proyectos</a
-        >
+        <a class="nav-link" routerLink="/proyectos" routerLinkActive="active">
+          <i class="bi bi-folder2-open"></i> Proyectos
+        </a>
       </li>
     </ul>
   </div>
 </nav>
-<div class="container mt-3">
+
+<div class="container mt-4">
   <router-outlet></router-outlet>
 </div>
+
+<footer class="bg-light text-center text-lg-start border-top py-3">
+  <div class="text-center p-3">
+    © 2024 Gestión de Proyectos |
+    <a href="" class="text-dark">Politica de Privacidad</a>
+  </div>
+</footer>

@@ -34,6 +34,10 @@ export class TareaComponent implements OnInit {
     return this.tareaForm.get('nombre') as FormControl;
   }
 
+  get fechaCierre() {
+    return this.tareaForm.get('fechaCierre') as FormControl;
+  }
+
   constructor(
     public fb: FormBuilder,
     public tareasService: TareasService,
@@ -54,7 +58,7 @@ export class TareaComponent implements OnInit {
       responsable: ['', Validators.required],
       estado: ['', Validators.required],
       fechaRegistro: [null],
-      fechaCierre: ['', Validators.required],
+      fechaCierre: ['', [Validators.required, this.validarFecha]],
       proyecto: ['', Validators.required],
     });
 
@@ -213,6 +217,14 @@ export class TareaComponent implements OnInit {
     if (control) {
       control.reset();
     }
+  }
+
+  validarFecha(control: any) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fecha = new Date(control.value);
+
+    return fecha <= hoy ? { fechaInvalida: true } : null;
   }
 
   generarPDF() {
